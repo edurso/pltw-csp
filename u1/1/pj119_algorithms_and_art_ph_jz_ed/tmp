@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import turtle as trtl
+
+wn = trtl.Screen() # screen object
+
+wn.addshape('/path/to/image.gif') # this only works with .gifs for some reason
+
+t = trtl.Turtle(shape='/path/to/image.gif') # turtle object, shape set in constructor
+
+t.shape('/path/to/image.gif') # set shape of turtle instance
+
+
+
+
