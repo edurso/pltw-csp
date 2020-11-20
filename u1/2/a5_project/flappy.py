@@ -2,8 +2,6 @@
 
 import random as rand
 import turtle as trtl
-import leaderboard as lb
-import time
 
 # class for gravity object
 class Grav():
@@ -26,7 +24,7 @@ class Grav():
         self.grav = self.inverse
 
 # class for a set of pipes
-class PipeSet():
+class Pipe():
     # constructor creates new pipe object and sets its position
     def __init__(self, x, stroke, filepath, pipe_range_low, pipe_range_high, pipe_spacing, top_pipe_path, bottom_pipe_path) -> None:
         self.stroke = stroke
@@ -56,6 +54,12 @@ class PipeSet():
     # function returns the x position of the pipe set
     def getx(self) -> int:
         return self.x
+    # function returns the y position of the top pipe
+    def get_topy(self) -> int:
+        return self.top.ycor()
+    # function returns the y position of the bottom pipe
+    def get_bottomy(self) -> int:
+        return self.bottom.ycor()
     # function removes the pipes from view 
     def hide(self) -> None:
         self.top.clear()
@@ -63,84 +67,130 @@ class PipeSet():
         self.bottom.clear()
         self.bottom.hideturtle()
 
-# configure constants
-GROUND = -200
-LEFT_BORDER = -600
-PIPE_STROKE = 5
-PIPE_INIT = 150
-PIPE_SPACING = 250
-SCREEN_WIDTH = 474
-SCREEN_HEIGHT = 600
-PIPE_LOW = 150
-PIPE_HIGH = 350
-PIPE_SPACING_VERT = 500
-GRAV_COEF = Grav(grav=4,grav_inc=0.6,inverse=-8) # (grav=1,grav_inc=0.03,inverse=-2)
-FILEPATH = "./img/"
-BIRD_IMG = "bird.gif"
-TOP_PIPE_PATH = "top-pipe.gif"
-BOTTOM_PIPE_PATH = "bottom-pipe.gif"
-BG_IMAGE = "flappy-bird.gif"
-LB_FILE = "flappy-leaderboard.txt"
+# class for a user's score
+class Score():
+    # constructor initilizes score of 0
+    def __init__(self) -> None:
+        self.score = 0
+    # function sets score to particular value
+    def set(self, score) -> None:
+        self.score = score
+    # function retrieves score
+    def get(self) -> int:
+        return self.score
 
-# setup window
-wn = trtl.Screen()
-wn.screensize(SCREEN_WIDTH,SCREEN_HEIGHT)
-wn.bgpic(FILEPATH + BG_IMAGE)
-wn.register_shape(FILEPATH + BIRD_IMG)
-wn.register_shape(FILEPATH + TOP_PIPE_PATH)
-wn.register_shape(FILEPATH + BOTTOM_PIPE_PATH)
+# class for the list of pipes
+class PipeSet():
+    # constructor creates new, empty list
+    def __init__(self) -> None:
+        self.pipe_list = []
+    # function returns the list of pipes
+    def pipes(self) -> list:
+        return self.pipe_list
+    # functions appends a pipe onto the list
+    def append(self, pipe) -> None:
+        self.pipe_list.append(pipe)
+    # function empties the list of pipes
+    def clear(self) -> None:
+        self.pipe_list.clear()
+
+# configure constants
+GROUND            = -200
+LEFT_BORDER       = -600
+SCREEN_BOTTOM     = -350
+PIPE_STROKE       = 8
+PIPE_INIT         = 150
+PIPE_SPACING      = 250
+SCREEN_WIDTH      = 474
+SCREEN_HEIGHT     = 600
+PIPE_LOW          = 150
+PIPE_HIGH         = 350
+PIPE_SPACING_VERT = 500
+PIPE_WIDTH        = 60 
+PIPE_HEIGHT       = 163
+GRAV_COEF         = Grav(grav=8,grav_inc=1,inverse=-12)
+FILEPATH          = "./img/"
+BIRD_IMG          = "bird.gif"
+TOP_PIPE_PATH     = "top-pipe.gif"
+BOTTOM_PIPE_PATH  = "bottom-pipe.gif"
+BG_IMAGE          = "flappy-bird.gif"
+LB_FILE           = "flappy-leaderboard.txt"
+KEYS = {
+    "SPACE":"space",
+    "UP":"Up",
+    "Q":"q",
+}
+
+pipes = PipeSet()
 
 # function creates a new pipe object
-def new_pipe(pos):
-    return PipeSet(pos, PIPE_STROKE, FILEPATH, PIPE_LOW, PIPE_HIGH, PIPE_SPACING_VERT, TOP_PIPE_PATH, BOTTOM_PIPE_PATH)
-
-# config variables
-user_score = 0
-pipes = []
-for i in range(5):
-    pipes.append(new_pipe(PIPE_INIT + i*PIPE_SPACING))
-bird = trtl.Turtle(shape=(FILEPATH+BIRD_IMG))
-bird.penup()
+def new_pipe(pos) -> Pipe:
+    return Pipe(pos, PIPE_STROKE, FILEPATH, PIPE_LOW, PIPE_HIGH, PIPE_SPACING_VERT, TOP_PIPE_PATH, BOTTOM_PIPE_PATH)
 
 # function to update pipe positions
-def update_pipes():
-    for pp in pipes:
+def update_pipes() -> None:
+    for pp in pipes.pipes():
         pp.move()
         if pp.getx() < LEFT_BORDER:
             pp.hide()
-            pipes.remove(pp)
-            pipes.append(new_pipe(pipes[len(pipes)-1].getx() + PIPE_SPACING))
+            pipes.pipes().remove(pp)
+            pipes.pipes().append(new_pipe(pipes.pipes()[len(pipes.pipes())-1].getx() + PIPE_SPACING))
 
 # function to update position of bird
-def update_bird():
+def update_bird(bird) -> None:
     bird.sety(bird.ycor()-1*GRAV_COEF.get_grav())
     GRAV_COEF.increment()
 
 # function to handle key press events
-def handle_key():
+def handle_key() -> None:
     GRAV_COEF.invert()
 
 # function to determine if bird has hit a pipe
-def bird_crashed():
-    return bird.ycor() < GROUND
-    manage_leaderboard()
+def bird_crashed(bird) -> bool:
+    ground = bird.ycor() < GROUND
+    pipe = False
+    for pp in pipes.pipes():
+        x = bird.xcor() >= (pp.getx() - PIPE_WIDTH) and bird.xcor() <= (pp.getx() + PIPE_WIDTH)
+        topy = bird.ycor() >= (pp.get_topy() - PIPE_HEIGHT) 
+        bottomy = bird.ycor() <= (pp.get_bottomy() + PIPE_HEIGHT) 
+        pipe = (x and topy) or (x and bottomy)
+        if pipe:
+            return True
+    return ground or pipe
+
+# function makes bird drop from sky
+def bird_die(bird) -> None:
+    # TODO: Print "Game Over"
+    while bird.ycor() > SCREEN_BOTTOM:
+        bird.sety(bird.ycor()-1)
+
+def update_score() -> None:
+    # TODO: Implement
+    return None
+
+# function initilizes the game screen
+# must be called before `play_game` method
+def init() -> trtl.Turtle:
+    wn = trtl.Screen()
+    pipes.clear()
+    wn.screensize(SCREEN_WIDTH, SCREEN_HEIGHT)
+    wn.bgpic(FILEPATH + BG_IMAGE)
+    wn.register_shape(FILEPATH + BIRD_IMG)
+    wn.register_shape(FILEPATH + TOP_PIPE_PATH)
+    wn.register_shape(FILEPATH + BOTTOM_PIPE_PATH)
+    for i in range(5):
+        pipes.append(new_pipe(PIPE_INIT + i*PIPE_SPACING))
+    bird = trtl.Turtle(shape=(FILEPATH+BIRD_IMG))
+    bird.penup()
+    return bird
 
 # game function
-def play_game():  
-    time.sleep(5)
-    while not bird_crashed():
-        update_bird()
+def play_game(bird) -> int:
+    score = 0
+    # TODO: Print Countdown In Score
+    while not bird_crashed(bird):
+        update_bird(bird)
         update_pipes()
-
-# configure key presses
-wn.onkeypress(handle_key, "space")
-wn.onkeypress(handle_key, "Up")
-
-# listen key presses
-wn.listen()
-
-# play game
-play_game()
-
-# main loop
-wn.mainloop()
+        update_score()
+    bird_die(bird)
+    return score
