@@ -3,6 +3,7 @@
 import random as rand
 import turtle as util
 import leaderboard as lb
+import sys
 import flappy
 import time
 
@@ -26,10 +27,11 @@ def launch_game() -> None:
 def quit_game() -> None:
     clear_start_screen()
     wn.clear()
-    # TODO: draw leaderboard
+    sys.exit()
 
 # function to show initial screen
 def start_screen() -> None:
+    # TODO: Draw Leaderboard
     font_setup = ("Arial", 20, "normal")
     sc.speed('fastest')
     sc.clear()
@@ -53,4 +55,5 @@ def clear_start_screen() -> None:
     sc.hideturtle()
 
 # APPLICATIONS BEGINS TO RUN HERE
+# TODO: take name as input for leaderboard
 start_screen()

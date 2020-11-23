@@ -95,30 +95,30 @@ class PipeSet():
         self.pipe_list.clear()
 
 # configure constants
-GROUND            = -200
-LEFT_BORDER       = -600
-SCREEN_BOTTOM     = -350
-PIPE_STROKE       = 8
-PIPE_INIT         = 150
-PIPE_SPACING      = 250
-SCREEN_WIDTH      = 474
-SCREEN_HEIGHT     = 600
-PIPE_LOW          = 150
-PIPE_HIGH         = 350
-PIPE_SPACING_VERT = 500
-PIPE_WIDTH        = 60 
-PIPE_HEIGHT       = 163
-GRAV_COEF         = Grav(grav=8,grav_inc=1,inverse=-12)
-FILEPATH          = "./img/"
-BIRD_IMG          = "bird.gif"
-TOP_PIPE_PATH     = "top-pipe.gif"
-BOTTOM_PIPE_PATH  = "bottom-pipe.gif"
-BG_IMAGE          = "flappy-bird.gif"
-LB_FILE           = "flappy-leaderboard.txt"
+GROUND             = -200
+LEFT_BORDER        = -600
+SCREEN_BOTTOM      = -350
+PIPE_STROKE        = 8
+PIPE_INIT          = 150
+PIPE_SPACING       = 250
+SCREEN_WIDTH       = 474
+SCREEN_HEIGHT      = 600
+PIPE_LOW           = 150
+PIPE_HIGH          = 350
+PIPE_SPACING_VERT  = 500
+PIPE_WIDTH         = 60 
+PIPE_HEIGHT        = 163
+GRAV_COEF          = Grav(grav=8,grav_inc=1,inverse=-12)
+FILEPATH           = "./img/"
+BIRD_IMG           = "bird.gif"
+TOP_PIPE_PATH      = "top-pipe.gif"
+BOTTOM_PIPE_PATH   = "bottom-pipe.gif"
+BG_IMAGE           = "flappy-bird.gif"
+LB_FILE            = "flappy-leaderboard.txt"
 KEYS = {
-    "SPACE":"space",
-    "UP":"Up",
-    "Q":"q",
+    "SPACE" : "space",
+    "UP"    : "Up",
+    "Q"     : "q",
 }
 
 pipes = PipeSet()
@@ -187,7 +187,6 @@ def init() -> trtl.Turtle:
 # game function
 def play_game(bird) -> int:
     score = 0
-    # TODO: Print Countdown In Score
     while not bird_crashed(bird):
         update_bird(bird)
         update_pipes()
