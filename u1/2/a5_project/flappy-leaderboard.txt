@@ -1,5 +1,5 @@
 KEN,22
-e,20
-no,20
-best,20
-turtle,17
+kenzo,9
+Name,3
+kenzo,2
+Name,1
