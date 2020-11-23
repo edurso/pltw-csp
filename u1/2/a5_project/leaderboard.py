@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-bronze_score = 15
-silver_score = 20
-gold_score = 25
-
+# function to load leaderboard from file
 def load_leaderboard(file_name, leader_names, leader_scores):
     with open(file_name, 'r') as leaderboard_file:
         for line in leaderboard_file:
@@ -11,6 +8,7 @@ def load_leaderboard(file_name, leader_names, leader_scores):
             leader_names.append(leader_name)
             leader_scores.append(int(leader_score))
 
+# function to update leaderboard file
 def update_leaderboard(file_name, leader_names, leader_scores, player_name, player_score):
     leader_index = 0
     while (leader_index < len(leader_scores)):
@@ -30,31 +28,18 @@ def update_leaderboard(file_name, leader_names, leader_scores, player_name, play
             leaderboard_file.write(leader_names[leader_index] + "," + str(leader_scores[leader_index]) + "\n")
             leader_index += 1
 
-def draw_leaderboard(leader_names, leader_scores, high_scorer, turtle_object, player_score):
+# function to draw leaderboard
+def draw_leaderboard(leader_names, leader_scores, turtle_object):
     font_setup = ("Arial", 20, "normal")
     turtle_object.clear()
     turtle_object.penup()
-    turtle_object.goto(-200, 100)
+    turtle_object.goto(-200, 0)
     turtle_object.hideturtle()
     turtle_object.down()
     leader_index = 0
     while leader_index < len(leader_names):
-        turtle_object.write(str(leader_index + 1) + "\t" + leader_names[leader_index] + "\t" + str(
-            leader_scores[leader_index]), font=font_setup)
+        turtle_object.write(str(leader_index + 1) + "\t" + leader_names[leader_index] + "\t" + str(leader_scores[leader_index]), font=font_setup)
         turtle_object.penup()
         turtle_object.goto(-200, int(turtle_object.ycor())-50)
         turtle_object.down()
-        leader_index = leader_index + 1
-    if (high_scorer):
-        turtle_object.write("Congratulations! You made the leaderboard!", font=font_setup)
-    else:
-        turtle_object.write("Sorry, you didn't make the leaderboard. Maybe next time!", font=font_setup)
-    turtle_object.penup()
-    turtle_object.goto(-200, int(turtle_object.ycor())-50)
-    turtle_object.pendown()
-    if (player_score >= bronze_score and player_score < silver_score):
-        turtle_object.write("... Bronze medal!", font=font_setup)
-    elif (player_score >= silver_score and player_score < gold_score):
-        turtle_object.write("... Silver medal!", font=font_setup)
-    elif (player_score >= gold_score):
-        turtle_object.write("... Gold medal!", font=font_setup)
+        leader_index += 1

@@ -1,5 +1,5 @@
-a,5
-b,4
-c,3
-d,2
-e,1
+KEN,22
+e,20
+no,20
+best,20
+turtle,17

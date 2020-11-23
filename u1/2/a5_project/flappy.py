@@ -32,15 +32,17 @@ class Pipe():
         self.filepath = filepath 
         height_top = rand.randint(pipe_range_low, pipe_range_high)
         height_bottom = height_top - pipe_spacing 
-        self.top = trtl.Turtle(shape=(self.filepath + top_pipe_path))
+        self.top = trtl.Turtle()
         self.top.hideturtle()
+        self.top.shape(self.filepath + top_pipe_path)
         self.top.speed('fastest')
         self.top.penup()
         self.top.setx(x)
         self.top.sety(height_top)
         self.top.showturtle()
-        self.bottom = trtl.Turtle(shape=(self.filepath + bottom_pipe_path))
+        self.bottom = trtl.Turtle()
         self.bottom.hideturtle()
+        self.bottom.shape(self.filepath + bottom_pipe_path)
         self.bottom.speed('fastest')
         self.bottom.penup()
         self.bottom.setx(x)
@@ -70,14 +72,18 @@ class Pipe():
 # class for a user's score
 class Score():
     # constructor initilizes score of 0
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
         self.score = 0
+        self.name = name
     # function sets score to particular value
     def set(self, score) -> None:
         self.score = score
     # function retrieves score
     def get(self) -> int:
         return self.score
+    # function retrieves players name
+    def get_name(self) -> str:
+        return self.name
 
 # class for the list of pipes
 class PipeSet():
@@ -100,15 +106,15 @@ LEFT_BORDER        = -600
 SCREEN_BOTTOM      = -350
 PIPE_STROKE        = 8
 PIPE_INIT          = 150
-PIPE_SPACING       = 250
+PIPE_SPACING       = 200 #250
 SCREEN_WIDTH       = 474
 SCREEN_HEIGHT      = 600
 PIPE_LOW           = 150
 PIPE_HIGH          = 350
 PIPE_SPACING_VERT  = 500
 PIPE_WIDTH         = 60 
-PIPE_HEIGHT        = 163
-GRAV_COEF          = Grav(grav=8,grav_inc=1,inverse=-12)
+PIPE_HEIGHT        = 173
+GRAV_COEF          = Grav(grav=10,grav_inc=1.5,inverse=-15) # (grav=8,grav_inc=1,inverse=-12)
 FILEPATH           = "./img/"
 BIRD_IMG           = "bird.gif"
 TOP_PIPE_PATH      = "top-pipe.gif"
@@ -119,6 +125,7 @@ KEYS = {
     "SPACE" : "space",
     "UP"    : "Up",
     "Q"     : "q",
+    "K"     : "k",
 }
 
 pipes = PipeSet()
@@ -128,13 +135,23 @@ def new_pipe(pos) -> Pipe:
     return Pipe(pos, PIPE_STROKE, FILEPATH, PIPE_LOW, PIPE_HIGH, PIPE_SPACING_VERT, TOP_PIPE_PATH, BOTTOM_PIPE_PATH)
 
 # function to update pipe positions
-def update_pipes() -> None:
+def update_pipes(bird, sc, score) -> int:
     for pp in pipes.pipes():
         pp.move()
         if pp.getx() < LEFT_BORDER:
             pp.hide()
             pipes.pipes().remove(pp)
             pipes.pipes().append(new_pipe(pipes.pipes()[len(pipes.pipes())-1].getx() + PIPE_SPACING))
+        if pp.getx() <= bird.xcor() and pp.getx() > bird.xcor() - PIPE_STROKE:
+            score += 1
+            font_setup = ("Arial", 50, "normal")
+            sc.clear()
+            sc.penup()
+            sc.goto(200, 200)
+            sc.hideturtle()
+            sc.down()
+            sc.write(str(score), font=font_setup)
+    return score
 
 # function to update position of bird
 def update_bird(bird) -> None:
@@ -159,14 +176,16 @@ def bird_crashed(bird) -> bool:
     return ground or pipe
 
 # function makes bird drop from sky
-def bird_die(bird) -> None:
-    # TODO: Print "Game Over"
+def bird_die(bird, sc) -> None:
+    font_setup = ("Arial", 60, "normal")
+    sc.clear()
+    sc.penup()
+    sc.goto(-200, 0)
+    sc.hideturtle()
+    sc.down()
+    sc.write("Game Over", font=font_setup)
     while bird.ycor() > SCREEN_BOTTOM:
         bird.sety(bird.ycor()-1)
-
-def update_score() -> None:
-    # TODO: Implement
-    return None
 
 # function initilizes the game screen
 # must be called before `play_game` method
@@ -185,11 +204,10 @@ def init() -> trtl.Turtle:
     return bird
 
 # game function
-def play_game(bird) -> int:
+def play_game(bird, sc) -> int:
     score = 0
     while not bird_crashed(bird):
         update_bird(bird)
-        update_pipes()
-        update_score()
-    bird_die(bird)
+        score = update_pipes(bird, sc, score)
+    bird_die(bird, sc)
     return score
