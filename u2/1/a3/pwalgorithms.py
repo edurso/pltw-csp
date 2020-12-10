@@ -22,7 +22,7 @@ def one_word(password):
     return False, guesses
 
 def two_word(password):
-	"""
+    """
     Function attempts to guess the given password.
 
     Parameters
@@ -39,13 +39,10 @@ def two_word(password):
 	int
         The number of guesses it took the function until it has found the second word in the passowrd after it knows the first word. If it does not find the password, this will be the number of attempts.
     """
-	guesses1, guesses2 = 0, 0
-	w1_, w2_ = password.split()
-	for w1 in get_dictionary():
-		guesses1 += 1
-		if w1 == w1_:
-			for w2 in get_dictionary():
-				guesses2 += 1
-				if w2 == w2_:
-					return True, guesses1, guesses2
-	return False, guesses1, guesses2
+    guesses = 0
+    for w1 in get_dictionary():
+        for w2 in get_dictionary():
+            guesses += 1
+            if (w1 + w2) == password:
+                return True, guesses
+    return False, guesses
