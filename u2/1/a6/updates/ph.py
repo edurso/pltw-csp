@@ -1,6 +1,6 @@
 def monitor():
+  mesg = ""
   try:
-    
     ph_levels = [8.1, 8.2, 8.3]
 
     current = get_ph_level()
@@ -18,4 +18,6 @@ def monitor():
 
 # Functiion to simulate actual fish tank monitoring
 def get_ph_level():
+  # return 7
   return 8.2
+  # return 9

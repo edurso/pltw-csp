@@ -12,4 +12,6 @@ def monitor():
 
 # Functiion to simulate actual fish tank monitoring
 def get_posphate():
+  # return 0
   return .05
+  # return -0.7

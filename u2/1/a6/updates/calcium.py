@@ -1,6 +1,6 @@
 def monitor():
+  mesg = ""
   try:
-
     calc_levels = [380, 495, 410, 430, 445]
 
     current = get_calcium_level()
@@ -18,4 +18,6 @@ def monitor():
   
 # Functiion to simulate actual fish tank monitoring
 def get_calcium_level():
+  # return 0
   return 420
+  # return 500

@@ -1,6 +1,6 @@
 def monitor():
+  mesg = ""
   try:
-    
     val1 = 28
     val2 = 36
 
@@ -15,10 +15,12 @@ def monitor():
       mesg = "Salinity too high!"
     
   except:
-    print("Unexpected error")
+    print("salt Unexpected error")
 
   return mesg
 
 # Function to simulate actual fish tank monitoring
 def get_salinity():
+  # return 0
   return 31
+  # return 70
