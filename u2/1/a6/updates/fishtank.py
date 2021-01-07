@@ -52,7 +52,7 @@ class FishTank(tk.Tk):
     # reference a png to use as teh backround image
     dirname = os.path.dirname(__file__)
     print(dirname)
-    tank_picture = os.path.join(dirname, 'tank.PNG')
+    tank_picture = os.path.join(dirname, 'tank.png')
 
     self.title("Fish Tank Monitor")
     self.geometry("750x500") # size of tank image
