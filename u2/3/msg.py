@@ -4,8 +4,8 @@ import tkinter as tk
 import tkinter.scrolledtext as tksc
 import math
 import numpy as np
-from PIL import Image
 import os
+import cv2
 
 font = 'bahnschrift'
 
@@ -21,38 +21,42 @@ def encode():
     command_textbox.update()
     msg_str = msg_ent.get()
     msg_ascii = [ord(c) for c in msg_str]
-    #print(msg_ascii)
+    print(msg_ascii)
     size = int(math.sqrt(len(msg_ascii)))
     mat = np.zeros((size+1, size+1), dtype=int, order='C')
     n = 0
     for i in range(0,mat.shape[0]):
         for j in range(0,mat.shape[1]):
-            print('mat[{}][{}] = acsii[{}]'.format(i,j,n))
+            #print('mat[{}][{}] = acsii[{}]'.format(i,j,n))
             if not len(msg_ascii) == 0:
                 mat[i][j] = msg_ascii[0]
                 del msg_ascii[0]
             else:
                 break
             n += 1
-    print(mat, '\nEMPTY: {}'.format(msg_ascii))
-    img = Image.fromarray(mat, 'L')
+    #print(mat, '\nEMPTY: {}'.format(msg_ascii))
+    #print('Encoded: {}'.format(mat))
     path = get_path()
-    img.save(path)
+    img = cv2.imwrite(path, mat)
     command_textbox.delete(1.0, tk.END)
     command_textbox.insert(tk.END, 'Saved image to ' + path + '\n')
     command_textbox.update()
 
 def decode():
-    # read image from filepath
-
-    # convert to one dimensional list of pixels
-
-    # decode each pixel
-
-    # string together for a final message
-
-    # return the message & print to output path
-    return None
+    global command_textbox
+    path = get_path()
+    command_textbox.delete(1.0, tk.END)
+    command_textbox.insert(tk.END, 'Reading encoded message from ' + path + '\n')
+    command_textbox.update()
+    img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    msg = np.array(img).flatten()
+    msg = msg[msg > 5]
+    print(msg)
+    msg_final = ''.join([chr(m) for m in msg])
+    #print(msg_final)
+    command_textbox.delete(1.0, tk.END)
+    command_textbox.insert(tk.END, 'Decoded message:\n' + msg_final + '\n')
+    command_textbox.update()
 
 root = tk.Tk()
 root.title('MSG')
@@ -103,7 +107,7 @@ fpath_ent.pack()
 decode_btn = tk.Button(
     decode_frame,
     text='Decode Message',
-    command=encode,
+    command=decode,
     font=(font, 12),
     bg='red',
     fg='black',
