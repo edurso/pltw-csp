@@ -2,21 +2,45 @@
 
 import tkinter as tk
 import tkinter.scrolledtext as tksc
+import math
+import numpy as np
+from PIL import Image
+import os
 
 font = 'bahnschrift'
 
+def get_path():
+    global fpath_ent
+    return os.path.join(fpath_ent.get(), 'generated.jpg')
+
 def encode():
-    # read message from textbox
-
-    # convert message to binary
-
-    # write a byte to a pixel in a list
-
-    # make an image from the list of pixels using some random width/heigth component
-
-    # write image *somewhere*
-
-    return None
+    global msg_ent
+    global command_textbox
+    command_textbox.delete(1.0, tk.END)
+    command_textbox.insert(tk.END, 'Encoding message . . .\n')
+    command_textbox.update()
+    msg_str = msg_ent.get()
+    msg_ascii = [ord(c) for c in msg_str]
+    #print(msg_ascii)
+    size = int(math.sqrt(len(msg_ascii)))
+    mat = np.zeros((size+1, size+1), dtype=int, order='C')
+    n = 0
+    for i in range(0,mat.shape[0]):
+        for j in range(0,mat.shape[1]):
+            print('mat[{}][{}] = acsii[{}]'.format(i,j,n))
+            if not len(msg_ascii) == 0:
+                mat[i][j] = msg_ascii[0]
+                del msg_ascii[0]
+            else:
+                break
+            n += 1
+    print(mat, '\nEMPTY: {}'.format(msg_ascii))
+    img = Image.fromarray(mat, 'L')
+    path = get_path()
+    img.save(path)
+    command_textbox.delete(1.0, tk.END)
+    command_textbox.insert(tk.END, 'Saved image to ' + path + '\n')
+    command_textbox.update()
 
 def decode():
     # read image from filepath
