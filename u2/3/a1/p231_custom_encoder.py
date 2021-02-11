@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+# Eric D'Urso
+# Raymond Mei
+# Ellen Huang
+# Jon Grenillo
+# Yusuf Fateh
+# Jackson Trombly
+
 import tkinter as tk
 import tkinter.scrolledtext as tksc
 import math
