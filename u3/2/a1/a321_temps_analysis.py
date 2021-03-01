@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# Eric D'Urso
+# Nick DaSilva
+# Raymond Mei
+# Zack Wilk
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
