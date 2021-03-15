@@ -3,6 +3,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+figure, (high, mid, low) = plt.subplots(3)
+
 df = pd.read_csv('honey.csv', header=0)
 
 '''
@@ -37,22 +39,21 @@ for state in df['State'].unique():
     all_states.append(state) # append the state to the list of states
 honey_sums = sorted([honey.sum() for honey in all_honey]) # sort by total honey production
 
-def make_plot(sublist: list, title: str) -> None:
+def make_plot(sublist: list, title: str, axis: any) -> None:
     for i in range(len(all_states)): # add to plot for each state
         honey, state = all_honey[i], all_states[i] # get data for each state
         years = honey.keys() # get years from the keys of the data
         #print('Year = {}   |   Honey = {}'.format(years, honey))
         if honey.sum() in sublist:
-            plt.plot(years, honey, label=state) # throw it all on a graph
+            axis.plot(years, honey, label=state) # throw it all on a graph
 
-    plt.ylabel('Honey Production') # label the honey
-    plt.xlabel('Year') # label the x axis with time
-    plt.title(title) # give graph a title
-    plt.legend() # create a legend for each state
-    plt.show() # display plot
+    axis.set_ylabel('Honey Production') # label the honey
+    axis.set_xlabel('Year') # label the x axis with time
+    axis.set_title(title) # give graph a title
+    axis.legend() # create a legend for each state
 
-make_plot(honey_sums[:17], 'Small Producer Honey Production')
-make_plot(honey_sums[17:34], 'Mid Producer Honey Production')
-make_plot(honey_sums[34:], 'Large Producer Honey Production')
-
+make_plot(honey_sums[:17], 'Small Producer Honey Production', low)
+make_plot(honey_sums[17:34], 'Mid Producer Honey Production', mid)
+make_plot(honey_sums[34:], 'Large Producer Honey Production', high)
+plt.show()
 
