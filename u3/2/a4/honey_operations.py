@@ -3,7 +3,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-figure, (high, mid, low) = plt.subplots(3)
+figure, (high, mid, low) = plt.subplots(1, 3)
 
 df = pd.read_csv('honey.csv', header=0)
 
